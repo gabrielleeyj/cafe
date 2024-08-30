@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const db = require('./db/database');
 const cafeRoutes = require('./routes/cafeRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -14,6 +15,7 @@ require('./db/seed');
 
 // Routes
 app.use('/cafes', cafeRoutes);
+app.use('/employees', employeeRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
