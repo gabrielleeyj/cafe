@@ -6,7 +6,9 @@ const app = express();
 
 app.use(bodyParser.json());
 
-db.Init();
+// Initialize DB and seed data
+db.init();
+require('./db/seed');
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
