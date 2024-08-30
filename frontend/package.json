@@ -10,6 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.0.1",
+    "@tanstack/query-core": "^5.52.3",
+    "@tanstack/react-query": "^5.52.3",
+    "@tanstack/react-query-devtools": "^5.52.3",
+    "@tanstack/react-router": "^1.51.6",
+    "ag-grid-community": "^32.1.0",
+    "ag-grid-react": "^32.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
