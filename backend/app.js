@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const db = require('./db/database');
+const cafeRoutes = require('./routes/cafeRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -10,6 +11,9 @@ app.use(bodyParser.json());
 // Initialize DB and seed data
 db.init();
 require('./db/seed');
+
+// Routes
+app.use('/cafes', cafeRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
