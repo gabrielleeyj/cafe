@@ -12,7 +12,7 @@ function init() {
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
                 email_address TEXT NOT NULL UNIQUE,
-                phone_number TEXT NOT NULL UNIQUE CHECK(phone_number LIKE '8%' OR phone_number LIKE '9%' AND length(phone_number) = 8),
+                phone_number TEXT NOT NULL UNIQUE CHECK(length(phone_number) = 8),
                 gender TEXT NOT NULL CHECK(gender IN ('Male', 'Female'))
             )
         `);

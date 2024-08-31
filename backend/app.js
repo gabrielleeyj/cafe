@@ -12,6 +12,14 @@ require('dotenv').config();
 
 const app = express();
 
+// Security middleware
+app.use(helmet()); // Set HTTP headers for security
+app.use(cors()); // Enable CORS
+
+// Body parsing middleware to parse JSON and urlencoded bodies
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
 // Initialize DB and seed data
 db.init();
 require('./db/seed');
@@ -20,15 +28,11 @@ require('./db/seed');
 app.use('/cafes', cafeRoutes);
 app.use('/employees', employeeRoutes);
 
-// Middleware
 // Error handling middleware
-app.use(cors());
 app.use(errorHandler);
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(helmet()); // for secure http headers
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
