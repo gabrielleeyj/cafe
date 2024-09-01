@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useEmployees } from '../hooks/useEmployees';
 import { AgGridReact } from 'ag-grid-react';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Container } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -45,15 +45,15 @@ function EmployeesPage() {
   if (error) return <div>An error occurred: {error.message}</div>;
 
   return (
-    <Box sx={{ height: 400, width: '100%', my: 4 }}>
+    <Box sx={{ my: 4 }}>
       <Button variant="contained" onClick={() => navigate('/employees/new')}>Add New Employee</Button>
-      <div className="ag-theme-alpine" style={{ height: 300, width: '100%' }}>
+      <Container>
         <AgGridReact
           rowData={employees}
           columnDefs={columns}
           domLayout='autoHeight'
         />
-      </div>
+      </Container>
     </Box>
   );
 }
