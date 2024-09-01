@@ -11,7 +11,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied
 
 function EmployeesPage() {
   const { employeesQuery } = useEmployees();
-  const { data: employees, isLoading, error } = employeesQuery;
+  const { data: employees, isLoading, error, refetch } = employeesQuery;
   const navigate = useNavigate();
 
   const columns = [
@@ -40,7 +40,7 @@ function EmployeesPage() {
     const confirm = window.confirm('Are you sure you want to delete this employee?');
     if (confirm) {
       await fetch(`http://localhost:3000/employees/${id}`, { method: 'DELETE' });
-      employeesQuery.refetch();// Re-fetch the data after deletion
+      refetch(); // Re-fetch the data after deletion
     }
   };
 
