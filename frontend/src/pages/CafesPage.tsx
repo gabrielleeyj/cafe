@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useCafes } from '../hooks/useCafes';
 import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, only needs to be imported once
-import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 import { Button, TextField, Box } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 
 function CafesPage() {
-  const { data: cafes, isLoading, error, refetch } = useCafes();
+  const { cafesQuery } = useCafes();
+  const { data: cafes, isLoading, error, refetch } = cafesQuery;
   const [filterText, setFilterText] = useState('');
   const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ function CafesPage() {
     {
       field: 'actions',
       headerName: 'Actions',
-      cellRendererFramework: (params) => (
+      cellRenderer: (params) => (
         <React.Fragment>
           <Button startIcon={<EditIcon />} onClick={() => navigate(`/cafes/edit/${params.data.id}`)} color="primary">
             Edit
@@ -54,21 +56,28 @@ function CafesPage() {
 
   return (
     <Box sx={{ width: '100%', my: 4 }}>
-      <Button variant="contained" onClick={() => navigate('/cafes/new')}>Add New Café</Button>
-      <TextField
-        label="Filter by Location"
-        variant="outlined"
-        value={filterText}
-        onChange={handleFilterChange}
-      />
-      <div className="ag-theme-alpine" style={{ width: '100%' }}>
+      <Grid container spacing={2} className="ag-theme-quartz">
+        <Grid size={12}>
+          <Button size="medium" variant="contained" onClick={() => navigate('/cafes/new')}>Add New Café</Button>
+        </Grid>
+        <Grid size={12}>
+          <TextField
+            size="small"
+            label="Filter by Location"
+            variant="outlined"
+            value={filterText}
+            onChange={handleFilterChange}
+          />
+        </Grid>
+      <Grid size={12}>
         <AgGridReact
           rowData={filteredCafes}
           columnDefs={columns}
           domLayout='autoHeight'
         />
-      </div>
-    </Box>
+      </Grid>
+    </Grid>
+    </Box >
   );
 }
 
