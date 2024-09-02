@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 
-const { init } = require('./db/database');
+const db = require('./db/database');
 const cafeRoutes = require('./routes/cafeRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
@@ -21,7 +21,7 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 // Initialize DB
-init();
+db.init();
 require('./db/seed'); // This will execute the seed script
 
 // Routes
