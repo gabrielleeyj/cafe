@@ -12,7 +12,7 @@ function init() {
             CREATE TABLE IF NOT EXISTS employees (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
-                email_address TEXT NOT NULL UNIQUE,
+                email_address TEXT,
                 phone_number TEXT NOT NULL UNIQUE CHECK(length(phone_number) = 8),
                 gender TEXT NOT NULL CHECK(gender IN ('Male', 'Female'))
             )

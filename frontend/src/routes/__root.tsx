@@ -24,7 +24,7 @@ function App() {
           </Typography>
           <Link to="/" style={{ color: 'inherit', textDecoration: 'none', margin: '0 10px' }}>Home</Link>
           <Link to="/cafes" style={{ color: 'inherit', textDecoration: 'none', margin: '0 10px' }}>Cafes</Link>
-          <Link to="/employees" style={{ color: 'inherit', textDecoration: 'none', margin: '0 10px' }}>Employees</Link>
+          <Link to="/employees" params={{ cafe: '' }} style={{ color: 'inherit', textDecoration: 'none', margin: '0 10px' }}>Employees</Link>
           <Switch onChange={toggleTheme} />
         </Toolbar>
       </AppBar>

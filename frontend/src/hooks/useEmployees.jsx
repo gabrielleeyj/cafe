@@ -9,6 +9,15 @@ const fetchEmployees = async () => {
   return data.employees;
 };
 
+const fetchEmployeeList = async (cafe) => {
+  const response = await fetch(`http://localhost:3000/employees?cafe=${cafe}`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  const data = await response.json();
+  return data.employees;
+};
+
 const createEmployee = async (employee) => {
   const response = await fetch('http://localhost:3000/employees', {
     method: 'POST',
@@ -48,31 +57,55 @@ const deleteEmployee = async (id) => {
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
-  return response.json(); 
+  return response.json();
 };
 
 export function useEmployees() {
   const queryClient = useQueryClient();
+
+  // This query is for fetching all employees
+  const employeesQuery = useQuery({
+    queryKey: ['employees'],
+    queryFn: fetchEmployees,
+    staleTime: 1000 * 60 * 5, // Data is considered fresh for 5 minutes
+    cacheTime: 1000 * 60 * 15, // Data is cached for 15 minutes
+    retry: 1,
+  });
+
+  // This query is for fetching employees filtered by café
+  const filteredEmployeeList = (cafe) => useQuery({
+    queryKey: ['employees', cafe],
+    queryFn: () => fetchEmployeeList(cafe), // Pass a function that calls fetchEmployeeList
+    enabled: !!cafe, // Only fetch when the café is not empty
+    staleTime: 1000 * 60 * 5, // Data is considered fresh for 5 minutes
+    cacheTime: 1000 * 60 * 15, // Data is cached for 15 minutes
+    retry: 1,
+  });
+
+  // Mutation for creating an employee
+  const createEmployeeMutation = useMutation({
+    mutationFn: createEmployee,
+    onSuccess: () => queryClient.invalidateQueries(['employees'])
+  });
+
+  // Mutation for updating an employee
+  const updateEmployeeMutation = useMutation({
+    mutationFn: updateEmployee,
+    onSuccess: () => queryClient.invalidateQueries(['employees'])
+  });
+
+  // Mutation for deleting an employee
+  const deleteEmployeeMutation = useMutation({
+    mutationFn: deleteEmployee,
+    onSuccess: () => queryClient.invalidateQueries(['employees'])
+  });
+
   return {
-    employeesQuery: useQuery({
-      queryKey: ['employees'],
-      queryFn: fetchEmployees,
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 15,
-      retry: 1,
-    }),
-    createEmployeeMutation: useMutation({
-      mutationFn: createEmployee,
-      onSuccess: () => queryClient.invalidateQueries(['employees'])
-    }),
-    updateEmployeeMutation: useMutation({
-      mutationFn: updateEmployee,
-      onSuccess: () => queryClient.invalidateQueries(['employees'])
-    }),
-    deleteEmployeeMutation: useMutation({
-      mutationFn: deleteEmployee,
-      onSuccess: () => queryClient.invalidateQueries(['employees'])
-    })
+    employeesQuery,
+    filteredEmployeeList, // Expose the filtered query function
+    createEmployeeMutation,
+    updateEmployeeMutation,
+    deleteEmployeeMutation
   };
 }
 

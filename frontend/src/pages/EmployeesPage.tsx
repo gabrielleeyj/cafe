@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { useEmployees } from '../hooks/useEmployees';
-import { useCafes } from '../hooks/useCafes';
+import { Link } from '@tanstack/react-router';
 import { AgGridReact } from 'ag-grid-react';
 import { Button, Box } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+
+import { useEmployees } from '../hooks/useEmployees';
+import { useCafes } from '../hooks/useCafes';
 import EmployeeForm from '../components/EmployeeForm';
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+import { Route } from '../routes/employees.lazy';
 
 function EmployeesPage() {
   const { cafesQuery } = useCafes();
   const { data: cafes } = cafesQuery;
-  const { employeesQuery, deleteEmployeeMutation, createEmployeeMutation, updateEmployeeMutation } = useEmployees();
+  const { employeesQuery, filteredEmployeeList, deleteEmployeeMutation, createEmployeeMutation, updateEmployeeMutation } = useEmployees();
   const { data: employees, isLoading, error, refetch } = employeesQuery;
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -23,6 +24,13 @@ function EmployeesPage() {
     setSelectedEmployee(employee);
     setOpenDialog(true);
   };
+
+  const handleEmployee = (employees) => {
+    console.log(employees);
+  };
+
+  const { cafe } = Route.useSearch();
+  const { data } = filteredEmployeeList(cafe);
 
   const columns = [
     { field: 'id', headerName: 'Employee ID' },
@@ -74,11 +82,18 @@ function EmployeesPage() {
     <Box sx={{ my: 4 }}>
       <Grid container spacing={2} className="ag-theme-quartz">
         <Grid size={12}>
-          <Button variant="contained" onClick={() => handleOpen()}>Add New Employee</Button>
+          <Button variant="contained" onClick={() => handleOpen()}>New Employee</Button>
+          &nbsp;
+          <Button variant="contained" onClick={() => handleEmployee(employees)}>Add Employee</Button>
+          &nbsp;
+          <Link to='/cafes'>
+            <Button variant="contained">Back</Button>
+          </Link>
         </Grid>
+
         <Grid size={12}>
           <AgGridReact
-            rowData={employees || []}
+            rowData={cafe ? data : employees || []}
             columnDefs={columns}
             domLayout='autoHeight'
           />
