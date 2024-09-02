@@ -1,24 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
+import { useCafes } from '../hooks/useCafes';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import ConfirmationDialog from '../components/ConfirmationDialog';
 
-const CafeForm = ({ cafe, onEdit, onSubmit, onDelete, handleClose } = {}) => {
+const CafeForm = ({ cafe, onEdit, onNew, handleClose }) => {
   const [openDialog, setOpenDialog] = useState(false);
-
+  const { deleteCafeMutation } = useCafes();
   // Initialize form with useForm
   const form = useForm({
-    initialValues: {
-      name: cafe?.name || '',
-      description: cafe?.description || '',
-      location: cafe?.location || '',
-      logo: cafe?.logo || null,
+    defaultValues: {
+      id: cafe?.id ?? '',
+      name: cafe?.name ?? '',
+      description: cafe?.description ?? '',
+      location: cafe?.location ?? '',
+      logo: cafe?.logo ?? null,
     },
-    onSubmit: async (values) => {
+    onSubmit: ({ value }) => {
       if (cafe) {
-        await onEdit(cafe.id, values);
+        onEdit(value);
       } else {
-        await onSubmit(values);
+        onNew(value);
       }
     },
     validate: (values) => {
@@ -34,8 +36,6 @@ const CafeForm = ({ cafe, onEdit, onSubmit, onDelete, handleClose } = {}) => {
   });
 
   const { Field, state, handleSubmit } = form;
-  console.log("form", form);
-
   const handleCancel = () => {
     if (!state.isDirty || window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
       handleClose();
@@ -46,11 +46,12 @@ const CafeForm = ({ cafe, onEdit, onSubmit, onDelete, handleClose } = {}) => {
     setOpenDialog(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = () => {
     if (cafe) {
-      await onDelete(cafe.id);
+      deleteCafeMutation.mutate({ id: cafe.id });
     }
     setOpenDialog(false);
+    handleClose();
   };
 
   const handleLogoChange = (event) => {
@@ -66,27 +67,35 @@ const CafeForm = ({ cafe, onEdit, onSubmit, onDelete, handleClose } = {}) => {
     <Box sx={{ padding: 2, maxWidth: 500, margin: 'auto' }}>
       <form>
         <Typography variant="h6">{cafe ? 'Edit Café' : 'Add New Café'}</Typography>
-    <Field name="name"
-    children={(field) => 
-      (
-        <TextField
-          label="Name"
-          value={field.state.value}
-          fullWidth
-          margin="normal"
-        />)}
-    />
-        <TextField
-          label="Description"
-          value={Field.description}
-          fullWidth
-          margin="normal"
+        <Field name="name"
+          children={(field) => (
+            <TextField
+              label="Name"
+              defaultValue={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              fullWidth
+              margin="normal"
+            />)}
         />
-        <TextField
-          label="Location"
-          value={Field.location}
-          fullWidth
-          margin="normal"
+        <Field name="description"
+          children={(field) => (
+            <TextField
+              label="Description"
+              defaultValue={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              fullWidth
+              margin="normal"
+            />)}
+        />
+        <Field name="location"
+          children={(field) => (
+            <TextField
+              label="Location"
+              defaultValue={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              fullWidth
+              margin="normal"
+            />)}
         />
         <input
           type="file"

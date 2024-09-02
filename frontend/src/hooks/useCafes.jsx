@@ -15,7 +15,7 @@ const createCafe = async (cafe) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(cafe)
+    body: JSON.stringify(cafe),
   });
   if (!response.ok) {
     throw new Error('Network response was not ok');
@@ -23,13 +23,14 @@ const createCafe = async (cafe) => {
   return response.json();
 };
 
-const updateCafe = async ({ id, cafe }) => {
-  const response = await fetch(`http://localhost:3000/cafes/${id}`, {
+const updateCafe = async (cafe) => {
+  console.log('updatingcafe', cafe);
+  const response = await fetch(`http://localhost:3000/cafes`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(cafe)
+    body: JSON.stringify(cafe),
   });
   if (!response.ok) {
     throw new Error('Network response was not ok');
