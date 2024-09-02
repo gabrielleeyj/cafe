@@ -1,3 +1,4 @@
+// ./db/database.js
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
@@ -6,8 +7,8 @@ const dbFilePath = path.resolve(__dirname, 'database.db');
 const db = new sqlite3.Database(dbFilePath);
 
 function init() {
-    db.serialize(() => {
-        db.run(`
+  db.serialize(() => {
+    db.run(`
             CREATE TABLE IF NOT EXISTS employees (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -17,7 +18,7 @@ function init() {
             )
         `);
 
-        db.run(`
+    db.run(`
             CREATE TABLE IF NOT EXISTS cafes (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -27,7 +28,7 @@ function init() {
             )
         `);
 
-        db.run(`
+    db.run(`
             CREATE TABLE IF NOT EXISTS employee_cafe (
                 employee_id TEXT NOT NULL,
                 cafe_id TEXT NOT NULL,
@@ -38,8 +39,27 @@ function init() {
                 CONSTRAINT unique_employee UNIQUE (employee_id)
             )
         `);
-    });
+  });
 }
 
-module.exports = { db, init };
+function checkDataExists(callback) {
+  db.get('SELECT COUNT(*) AS count FROM cafes', (err, row) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+    const cafesExist = row.count > 0;
+
+    db.get('SELECT COUNT(*) AS count FROM employees', (err, row) => {
+      if (err) {
+        callback(err);
+        return;
+      }
+      const employeesExist = row.count > 0;
+      callback(null, cafesExist, employeesExist);
+    });
+  });
+}
+
+module.exports = { db, init, checkDataExists };
 

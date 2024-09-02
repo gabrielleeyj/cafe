@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from '@tanstack/react-form';
-import { useNavigate, useParams } from '@tanstack/react-router';
-import { TextField, Button, Box, Typography, FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { TextField, Button, Box, Typography } from '@mui/material';
 import ConfirmationDialog from '../components/ConfirmationDialog';
 
-const CafeForm = ({ cafe, onSubmit, onDelete }) => {
-  const navigate = useNavigate();
-  const { cafeId } = useParams();
+const CafeForm = ({ cafe, onEdit, onSubmit, onDelete, handleClose } = {}) => {
   const [openDialog, setOpenDialog] = useState(false);
 
-  const {
-    Form,
-    setValues,
-    getField,
-    meta: { isDirty, canSubmit }
-  } = useForm({
+  // Initialize form with useForm
+  const form = useForm({
     initialValues: {
-      name: '',
-      description: '',
-      location: '',
-      logo: null
+      name: cafe?.name || '',
+      description: cafe?.description || '',
+      location: cafe?.location || '',
+      logo: cafe?.logo || null,
     },
-    onSubmit: async (values) => onSubmit(values, cafeId),
+    onSubmit: async (values) => {
+      if (cafe) {
+        await onEdit(cafe.id, values);
+      } else {
+        await onSubmit(values);
+      }
+    },
     validate: (values) => {
       const errors = {};
       if (values.name.length < 6 || values.name.length > 10) {
@@ -34,15 +33,12 @@ const CafeForm = ({ cafe, onSubmit, onDelete }) => {
     }
   });
 
-  useEffect(() => {
-    if (cafe) {
-      setValues(cafe);
-    }
-  }, [cafe, setValues]);
+  const { Field, state, handleSubmit } = form;
+  console.log("form", form);
 
   const handleCancel = () => {
-    if (!isDirty || window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
-      navigate('/cafes');
+    if (!state.isDirty || window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+      handleClose();
     }
   };
 
@@ -50,15 +46,17 @@ const CafeForm = ({ cafe, onSubmit, onDelete }) => {
     setOpenDialog(true);
   };
 
-  const handleConfirmDelete = () => {
-    onDelete(cafeId);
+  const handleConfirmDelete = async () => {
+    if (cafe) {
+      await onDelete(cafe.id);
+    }
     setOpenDialog(false);
   };
 
   const handleLogoChange = (event) => {
     const file = event.target.files[0];
     if (file && file.size <= 2097152) { // 2MB size limit
-      getField('logo').setFieldValue(file);
+      Field.logo.set(file);
     } else {
       alert('File size must be under 2MB.');
     }
@@ -66,27 +64,27 @@ const CafeForm = ({ cafe, onSubmit, onDelete }) => {
 
   return (
     <Box sx={{ padding: 2, maxWidth: 500, margin: 'auto' }}>
-      <Form>
-        <Typography variant="h6">{cafeId ? 'Edit Café' : 'Add New Café'}</Typography>
+      <form>
+        <Typography variant="h6">{cafe ? 'Edit Café' : 'Add New Café'}</Typography>
+    <Field name="name"
+    children={(field) => 
+      (
         <TextField
           label="Name"
-          {...getField('name').inputProps}
-          error={!!getField('name').error}
-          helperText={getField('name').error}
+          value={field.state.value}
           fullWidth
           margin="normal"
-        />
+        />)}
+    />
         <TextField
           label="Description"
-          {...getField('description').inputProps}
-          error={!!getField('description').error}
-          helperText={getField('description').error}
+          value={Field.description}
           fullWidth
           margin="normal"
         />
         <TextField
           label="Location"
-          {...getField('location').inputProps}
+          value={Field.location}
           fullWidth
           margin="normal"
         />
@@ -96,19 +94,19 @@ const CafeForm = ({ cafe, onSubmit, onDelete }) => {
           onChange={handleLogoChange}
         />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button type="submit" variant="contained" color="primary" disabled={!canSubmit}>
+          <Button type="button" onClick={handleSubmit} variant="contained" color="primary" disabled={!state.canSubmit}>
             Submit
           </Button>
           <Button onClick={handleCancel} variant="outlined" color="secondary">
             Cancel
           </Button>
-          {cafeId && (
+          {cafe && (
             <Button onClick={handleDelete} variant="outlined" color="error">
               Delete
             </Button>
           )}
         </Box>
-      </Form>
+      </form>
       <ConfirmationDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
