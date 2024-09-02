@@ -1,18 +1,28 @@
-import React from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { useEmployees } from '../hooks/useEmployees.jsx';
+import React, { useState } from 'react';
+import { useEmployees } from '../hooks/useEmployees';
+import { useCafes } from '../hooks/useCafes';
 import { AgGridReact } from 'ag-grid-react';
 import { Button, Box } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import EmployeeForm from '../components/EmployeeForm';
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 
 function EmployeesPage() {
-  const { employeesQuery } = useEmployees();
+  const { cafesQuery } = useCafes();
+  const { data: cafes } = cafesQuery;
+  const { employeesQuery, deleteEmployeeMutation, createEmployeeMutation, updateEmployeeMutation } = useEmployees();
   const { data: employees, isLoading, error, refetch } = employeesQuery;
-  const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+  const handleOpen = (employee) => {
+    setSelectedEmployee(employee);
+    setOpenDialog(true);
+  };
 
   const columns = [
     { field: 'id', headerName: 'Employee ID' },
@@ -26,7 +36,7 @@ function EmployeesPage() {
       headerName: 'Actions',
       cellRenderer: (params) => (
         <React.Fragment>
-          <Button startIcon={<EditIcon />} onClick={() => navigate(`/employees/edit/${params.data.id}`)} color="primary">
+          <Button startIcon={<EditIcon />} onClick={() => handleOpen(params.data)} color="primary">
             Edit
           </Button>
           <Button startIcon={<DeleteIcon />} onClick={() => handleDelete(params.data.id)} color="secondary">
@@ -36,10 +46,22 @@ function EmployeesPage() {
       )
     }];
 
-  const handleDelete = async (id) => {
+  const handleEdit = (data: object) => {
+    updateEmployeeMutation.mutate({ employee: data });
+    refetch();
+    setOpenDialog(false);
+  };
+
+  const handleNew = (values: object) => {
+    createEmployeeMutation.mutate(values);
+    refetch();
+    setOpenDialog(false);
+  };
+
+  const handleDelete = async (id: number) => {
     const confirm = window.confirm('Are you sure you want to delete this employee?');
     if (confirm) {
-      await fetch(`http://localhost:3000/employees/${id}`, { method: 'DELETE' });
+      deleteEmployeeMutation.mutate({ id: id });
       refetch(); // Re-fetch the data after deletion
     }
   };
@@ -52,16 +74,30 @@ function EmployeesPage() {
     <Box sx={{ my: 4 }}>
       <Grid container spacing={2} className="ag-theme-quartz">
         <Grid size={12}>
-          <Button variant="contained" onClick={() => navigate('/employees/new')}>Add New Employee</Button>
+          <Button variant="contained" onClick={() => handleOpen()}>Add New Employee</Button>
         </Grid>
         <Grid size={12}>
-        <AgGridReact
-          rowData={employees || []}
-          columnDefs={columns}
-          domLayout='autoHeight'
-        />
+          <AgGridReact
+            rowData={employees || []}
+            columnDefs={columns}
+            domLayout='autoHeight'
+          />
         </Grid>
       </Grid>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby='employee-form-dialog'
+        aria-describedby='employee-form-dialog-desc'
+      >
+        <EmployeeForm
+          employee={selectedEmployee}
+          cafes={cafes}
+          onEdit={handleEdit}
+          onNew={handleNew}
+          handleClose={() => setOpenDialog(false)}
+        />
+      </Dialog>
     </Box>
   );
 }

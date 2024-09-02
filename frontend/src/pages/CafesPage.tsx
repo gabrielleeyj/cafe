@@ -37,7 +37,7 @@ function CafesPage() {
     {
       field: 'actions',
       headerName: 'Actions',
-      cellRenderer: (params) => (
+      cellRenderer: (params) =>(
         <React.Fragment>
           <Button startIcon={<EditIcon />} onClick={() => handleOpen(params.data)} color="primary">
             Edit
@@ -51,14 +51,13 @@ function CafesPage() {
   ];
 
   const handleEdit = (data: object) => {
-    console.log('handleEdit', data);
     updateCafeMutation.mutate({cafe: data});
     refetch();
     setOpenDialog(false); // Close the dialog after submission
   };
 
   const handleNew = (values: object) => {
-    createCafeMutation.mutate({cafe: values});
+    createCafeMutation.mutate(values);
     refetch();
     setOpenDialog(false); // Close after submission
   };
@@ -73,12 +72,13 @@ function CafesPage() {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>An error occurred: {error.message}</div>;
-
+  if (!cafes) return <div>No cafes found</div>;
+  
   return (
     <Box sx={{ width: '100%', my: 4 }}>
       <Grid container spacing={2} className="ag-theme-quartz">
         <Grid size={12}>
-          <Button size="medium" variant="contained" onClick={handleOpen}>Add New Café</Button>
+          <Button size="medium" variant="contained" onClick={() => handleOpen()}>Add New Café</Button>
         </Grid>
         <Grid size={12}>
           <TextField
