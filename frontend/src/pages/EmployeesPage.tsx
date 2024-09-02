@@ -11,6 +11,7 @@ import { useEmployees } from '../hooks/useEmployees';
 import { useCafes } from '../hooks/useCafes';
 import EmployeeForm from '../components/EmployeeForm';
 import { Route } from '../routes/employees.lazy';
+import EmployeeAdd from '../components/EmployeeAdd';
 
 function EmployeesPage() {
   const { cafesQuery } = useCafes();
@@ -18,6 +19,7 @@ function EmployeesPage() {
   const { employeesQuery, filteredEmployeeList, deleteEmployeeMutation, createEmployeeMutation, updateEmployeeMutation } = useEmployees();
   const { data: employees, isLoading, error, refetch } = employeesQuery;
   const [openDialog, setOpenDialog] = useState(false);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   const handleOpen = (employee) => {
@@ -26,11 +28,12 @@ function EmployeesPage() {
   };
 
   const handleEmployee = (employees) => {
-    console.log(employees);
+    setOpenAddDialog(true);
   };
 
   const { cafe } = Route.useSearch();
   const { data } = filteredEmployeeList(cafe);
+  const cafedata = cafes ? cafes.find(data => data.name === cafe) : {};
 
   const columns = [
     { field: 'id', headerName: 'Employee ID' },
@@ -84,11 +87,14 @@ function EmployeesPage() {
         <Grid size={12}>
           <Button variant="contained" onClick={() => handleOpen()}>New Employee</Button>
           &nbsp;
-          <Button variant="contained" onClick={() => handleEmployee(employees)}>Add Employee</Button>
-          &nbsp;
-          <Link to='/cafes'>
-            <Button variant="contained">Back</Button>
-          </Link>
+          {cafe ?
+            <React.Fragment>
+              <Button variant="contained" onClick={() => handleEmployee(employees)}>Add Employee</Button>
+              &nbsp;
+              <Link to='/cafes'>
+                <Button variant="contained">Back</Button>
+              </Link>
+            </React.Fragment> : null}
         </Grid>
 
         <Grid size={12}>
@@ -113,6 +119,16 @@ function EmployeesPage() {
           handleClose={() => setOpenDialog(false)}
         />
       </Dialog>
+      <Dialog
+        open={openAddDialog}
+        onClose={() => setOpenAddDialog(false)}
+        >
+        <EmployeeAdd 
+        cafeId={cafedata?.id} 
+        employees={employees}
+        onClose={() => setOpenAddDialog(false)}
+        />
+        </Dialog>
     </Box>
   );
 }

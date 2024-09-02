@@ -27,11 +27,11 @@ const EmployeeForm = ({ employee, cafes, onEdit, onNew, handleClose }) => {
     defaultValues: {
       id: employee?.id ?? '',
       name: employee?.name ?? '',
-      email: employee?.email_address ?? '',
-      phoneNumber: employee?.phone_number ?? '',
+      email_address: employee?.email_address ?? '',
+      phone_number: employee?.phone_number ?? '',
       gender: employee?.gender ?? '',
       cafe: employee?.cafe ?? '',
-      startDate: employee?.start_date ?? new Date().toISOString().split('T')[0]
+      start_date: employee?.start_date ?? new Date().toISOString().split('T')[0]
     },
     onSubmit: ({ value }) => {
       if (employee) {
@@ -56,6 +56,7 @@ const EmployeeForm = ({ employee, cafes, onEdit, onNew, handleClose }) => {
   });
 
   const { Field, state, handleSubmit } = form;
+  console.log(form.state.meta);
 
   const handleCancel = () => {
     if (!state.isDirty || window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
@@ -147,7 +148,7 @@ const EmployeeForm = ({ employee, cafes, onEdit, onNew, handleClose }) => {
                 label="Start Date"
                 value={field.state.value ? dayjs(field.state.value) : null}
                 onChange={(date) => field.handleChange(date ? date.format('YYYY-MM-DD') : '')}
-                renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+                slotProps={{ textField: { variant: 'outlined', margin: 'normal', fullWidth: true } }}
               />
             )}
           />
