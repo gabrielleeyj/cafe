@@ -24,7 +24,6 @@ const createCafe = async (cafe) => {
 };
 
 const updateCafe = async (cafe) => {
-  console.log('updatingcafe', cafe);
   const response = await fetch(`http://localhost:3000/cafes`, {
     method: 'PUT',
     headers: {

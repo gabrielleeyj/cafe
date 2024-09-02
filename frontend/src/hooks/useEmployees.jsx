@@ -15,7 +15,7 @@ const createEmployee = async (employee) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(employee)
+    body: JSON.stringify(employee),
   });
   if (!response.ok) {
     throw new Error('Network response was not ok');
@@ -23,13 +23,13 @@ const createEmployee = async (employee) => {
   return response.json();
 };
 
-const updateEmployee = async ({ id, employee }) => {
-  const response = await fetch(`http://localhost:3000/employees/${id}`, {
+const updateEmployee = async ({ employee }) => {
+  const response = await fetch(`http://localhost:3000/employees`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(employee)
+    body: JSON.stringify(employee),
   });
   if (!response.ok) {
     throw new Error('Network response was not ok');
@@ -38,13 +38,17 @@ const updateEmployee = async ({ id, employee }) => {
 };
 
 const deleteEmployee = async (id) => {
-  const response = await fetch(`http://localhost:3000/employees/${id}`, {
-    method: 'DELETE'
+  const response = await fetch(`http://localhost:3000/employees`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(id),
   });
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
-  return response.json(); // Assuming it sends back some json
+  return response.json(); 
 };
 
 export function useEmployees() {
