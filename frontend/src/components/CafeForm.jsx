@@ -36,6 +36,7 @@ const CafeForm = ({ cafe, onEdit, onNew, handleClose }) => {
   });
 
   const { Field, state, handleSubmit } = form;
+
   const handleCancel = () => {
     if (!state.isDirty || window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
       handleClose();
