@@ -32,7 +32,7 @@ function init() {
             CREATE TABLE IF NOT EXISTS employee_cafe (
                 employee_id TEXT NOT NULL,
                 cafe_id TEXT NOT NULL,
-                start_date DATE NOT NULL,
+                start_date DATE DEFAULT CURRENT_DATE NOT NULL,
                 PRIMARY KEY (employee_id, cafe_id),
                 FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
                 FOREIGN KEY (cafe_id) REFERENCES cafes(id) ON DELETE CASCADE,
