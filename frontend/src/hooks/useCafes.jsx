@@ -37,13 +37,13 @@ const updateCafe = async (cafe) => {
   return response.json();
 };
 
-const deleteCafe = async (id) => {
+const deleteCafe = async ({ id }) => {
   const response = await fetch(`http://localhost:3000/cafes`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(id),
+    body: JSON.stringify({ id }),
   });
   if (!response.ok) {
     throw new Error('Network response was not ok');

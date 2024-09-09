@@ -57,7 +57,7 @@ function EmployeesPage() {
       )
     }];
 
-  const handleEdit = (data: object) => {
+  const handleEdit = (data) => {
     updateEmployeeMutation.mutate({ employee: data });
     refetch();
     setOpenDialog(false);

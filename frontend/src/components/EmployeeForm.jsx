@@ -45,11 +45,11 @@ const EmployeeForm = ({ employee, cafes, onEdit, onNew, handleClose }) => {
       if (values.name.length < 6 || values.name.length > 10) {
         errors.name = 'Name must be between 6 and 10 characters';
       }
-      if (!/^\S+@\S+\.\S+$/.test(values.email)) {
-        errors.email = 'Email must be a valid email address';
+      if (!/^\S+@\S+\.\S+$/.test(values.email_address)) {
+        errors.email_address = 'Email must be a valid email address';
       }
-      if (values.phoneNumber.lenght <= 8 || values.phoneNumber.length < 9) {
-        errors.phoneNumber = 'Phone number must be 8 digits long';
+      if (values.phone_number.length !== 8) {
+        errors.phone_number = 'Phone number must be 8 digits long';
       }
       return errors;
     }
