@@ -14,8 +14,8 @@ function seedCafe() {
 function seedEmployee() {
   db.serialize(() => {
     // Insert seed data for employees
-    db.run(`INSERT INTO employees (id, name, email_address, phone_number, gender) VALUES (?, ?, ?, ?, ?)`, [uuidv4(), "John Doe", "john@example.com", "81234567", "Male"]);
-    db.run(`INSERT INTO employees (id, name, email_address, phone_number, gender) VALUES (?, ?, ?, ?, ?)`, [uuidv4(), "Jane Smith", "jane@example.com", "91234567", "Female"]);
+    db.run(`INSERT INTO employees (id, name, email_address, phone_number, gender) VALUES (?, ?, ?, ?, ?)`, [generateID(), "John Doe", "john@example.com", "81234567", "Male"]);
+    db.run(`INSERT INTO employees (id, name, email_address, phone_number, gender) VALUES (?, ?, ?, ?, ?)`, [generateID(), "Jane Smith", "jane@example.com", "91234567", "Female"]);
   });
 }
 

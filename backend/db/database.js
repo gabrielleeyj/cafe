@@ -59,5 +59,9 @@ function checkDataExists(callback) {
   });
 }
 
-module.exports = { db, init, checkDataExists };
+function generateID() {
+  return Math.random().toString(36).substr(2, 5).toUpperCase();
+}
+
+module.exports = { db, init, checkDataExists, generateID };
 

@@ -1,5 +1,4 @@
-const { db } = require('../db/database');
-const { v4: uuidv4 } = require('uuid');
+const { db, generateID } = require('../db/database');
 
 // GET /employees
 exports.getEmployees = (req, res) => {
@@ -28,7 +27,7 @@ exports.getEmployees = (req, res) => {
 // POST /employee
 exports.createEmployee = (req, res) => {
   const { name, email_address, phone_number, gender, cafe_id, start_date } = req.body;
-  const id = uuidv4();
+  const id = `UI${generateID()}`;
 
   db.run(
     `INSERT INTO employees (id, name, email_address, phone_number, gender) VALUES (?, ?, ?, ?, ?)`,
