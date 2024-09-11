@@ -60,7 +60,9 @@ function checkDataExists(callback) {
 }
 
 function generateID() {
-  return Math.random().toString(36).substr(2, 5).toUpperCase();
+  const prefix = "UI";
+  const randomChars = Math.random().toString(36).substring(2, 7).toUpperCase();
+  return prefix + randomChars;
 }
 
 module.exports = { db, init, checkDataExists, generateID };
