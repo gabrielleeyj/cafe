@@ -68,43 +68,56 @@ const CafeForm = ({ cafe, onEdit, onNew, handleClose }) => {
     <Box sx={{ padding: 2, maxWidth: 500, margin: 'auto' }}>
       <form>
         <Typography variant="h6">{cafe ? 'Edit Café' : 'Add New Café'}</Typography>
-        <Field name="name"
-          children={(field) => (
+        <Field name="name">
+          {(field) => (
             <TextField
               label="Name"
-              defaultValue={field.state.value}
+              value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
+              error={!!field.state.meta.errors}
+              helperText={field.state.meta.errors}
               fullWidth
               margin="normal"
-            />)}
-        />
-        <Field name="description"
-          children={(field) => (
+            />
+          )}
+        </Field>
+        <Field name="description">
+          {(field) => (
             <TextField
               label="Description"
-              defaultValue={field.state.value}
+              value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
+              error={!!field.state.meta.errors}
+              helperText={field.state.meta.errors}
               fullWidth
               margin="normal"
-            />)}
-        />
-        <Field name="location"
-          children={(field) => (
+            />
+          )}
+        </Field>
+        <Field name="location">
+          {(field) => (
             <TextField
               label="Location"
-              defaultValue={field.state.value}
+              value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               fullWidth
               margin="normal"
-            />)}
-        />
+            />
+          )}
+        </Field>
         <input
           type="file"
           accept="image/*"
           onChange={handleLogoChange}
         />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button type="button" onClick={handleSubmit} variant="contained" color="primary" disabled={!state.canSubmit}>
+          <Button 
+            type="button" 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary" 
+            disabled={!form.state.canSubmit}
+          >
             Submit
           </Button>
           <Button onClick={handleCancel} variant="outlined" color="secondary">
